@@ -13,6 +13,39 @@ from telatransferir import *
 
 
 class Ui_Main(QtWidgets.QWidget):
+    """
+    Essa classe representa as telas do banco
+
+    - - -
+    Atributos
+    _________
+        Qtstack: return function
+            cria o layout para as telas
+
+        stack0 - stack6: return function
+            cria uma tela
+        
+        telaInicial: class
+            adiciona a tela inicial a uma stack
+
+        telaConta: class
+            adiciona a tela conta a uma stack
+
+        telaCadastro: class
+            adiciona a tela cadastro a uma stack
+
+        telaDeposito: class
+            adiciona a tela deposito a uma stack
+
+        telaSacar: class
+            adiciona a tela sacar a uma stack
+
+        telaTransferir: class
+            adiciona a tela transferir a uma stack
+
+        telaExtrato: class
+            adiciona a tela extrato a uma stack
+    """
     def setupUi(self, Main):
         Main.setObjectName('Main')
         Main.resize(640, 480)
@@ -57,6 +90,66 @@ class Ui_Main(QtWidgets.QWidget):
         self.QtStack.addWidget(self.stack6)
 
 class Main(QMainWindow, Ui_Main):
+    """
+    Essa classe representa uma conta bancária básica
+
+    - - -
+    Atributes
+    _________
+        Todos os parametros anteriores
+        server: class
+            conecta o cliente ao servidor
+    
+    Methods
+    -------
+    sair():
+        sai do banco
+    
+    BotaoVoltarTelaInicial():
+        volta para tela inicial
+    
+    BotaoParaTelaConta():
+        leva para a tela conta
+
+    BotaoParaTelaCadastro():
+        leva para tela cadastro
+
+    BotaoParaTelaDeposito():
+        leva a tela deposito
+
+    BotaoParaTelaSacar():
+        leva a tela sacar
+
+    BotaoParaTelaTransferir():
+        leva a tela transferir
+
+    BotaoParaTelaHistorico():
+        leva a tela historico e puxa do banco de dados o extrato
+
+    request_server(request):
+        envia uma mensagem para o servidor, recebe outra do servidor e retorna o resultado
+
+    BotaoCadastrar():
+        solicita uma solicitação para cadastrar ao servidor
+
+    BotaoLogin():
+        solicita uma solicitação para logar ao servidor
+
+    BotaoDepositar(self):
+        solicita uma solicitação para depositar ao servidor
+
+    BotaoSacar(self):
+        solicita uma solicitação para sacar ao servidor
+    
+    BotaoTransferir():
+        solicita uma solicitação para transferir ao servidor
+
+    concatenar(string):
+        formata a mensagem enviada pelo servidor
+    
+    concatenarHis(string):
+        formata a mensagem do historico
+    """
     def __init__(self):
         super(Main, self).__init__(None)
         self.setupUi(self)
@@ -93,13 +186,22 @@ class Main(QMainWindow, Ui_Main):
         self.telaExtrato.btnSair.clicked.connect(self.sair)
 
     def sair(self):
+        """
+        Sai do servidor
+        """
         self.request_server('sair')
         sys.exit()
 
     def BotaoVoltarTelaInicial(self):
+        """
+        Volta para primeira tela
+        """
         self.QtStack.setCurrentIndex(0)
 
     def BotaoParaTelaConta(self):
+        """
+        Verifica o login do usuário e conecta na conta
+        """
         solicit = f'login*{self.user}*{self.passw}'
         flag = self.request_server(solicit)
         if flag[0]:
@@ -108,18 +210,33 @@ class Main(QMainWindow, Ui_Main):
             self.QtStack.setCurrentIndex(1)
 
     def BotaoParaTelaCadastro(self):
+        """
+        Entra na tela cadastro
+        """
         self.QtStack.setCurrentIndex(2)
 
     def BotaoParaTelaDeposito(self):
+        """
+        Entra na tela deposito
+        """
         self.QtStack.setCurrentIndex(3)
 
     def BotaoParaTelaSacar(self):
+        """
+        Entra na tela Sacar
+        """
         self.QtStack.setCurrentIndex(4)
 
     def BotaoParaTelaTransferir(self):
+        """
+        Entra na tela Transferir
+        """
         self.QtStack.setCurrentIndex(5)
 
     def BotaoParaTelaHistorico(self):
+        """
+        Entra na tela historico e adiciona o historico na campo da tela
+        """
         solicit = f'get_historico*{self.numero}'
         flag = self.request_server(solicit)
         noti = self.concatenarHis(flag)
@@ -127,6 +244,14 @@ class Main(QMainWindow, Ui_Main):
         self.QtStack.setCurrentIndex(6)
     
     def request_server(self, request):
+        """
+        Envia uma mensagem para o servidor, e recebe outra mensagem retornando algo
+
+        Parameters
+        ----------
+        request: list
+            lista com o metodo que o usuário solicitou e informações do usuário
+        """
         self.server.send(request.encode())
         recv = self.server.recv(2048)
         flag = recv.decode()
@@ -134,12 +259,23 @@ class Main(QMainWindow, Ui_Main):
         return flag
     
     def concatenar(self, string):
+        """
+        Forma a mensagem enviada pelo servidor
+
+        Parametros
+        ----------
+        string: str
+            mensagem enviada pelo servidor
+        """
         noti = ''
         for i in range(1,len(string)):
             noti += string[i] + " "
         return noti
 
     def BotaoCadastrar(self):
+        """
+        Envia uma solicitação ao servidor para cadastrar e recebe os campos de cadastro do usuário
+        """
         nome = self.telaCadastro.lineEditNome.text()
         sobrenome = self.telaCadastro.lineEditSobrenome.text()
         cpf = (self.telaCadastro.lineEditCPF.text())
@@ -163,6 +299,9 @@ class Main(QMainWindow, Ui_Main):
             QMessageBox.information(None, 'Cadastro', 'Todos os dados devem estar preenchidos!')
 
     def BotaoLogin(self):
+        """
+        Envia uma solicitação ao servidor para logar e recebe os campos de login do usuário
+        """
         usuario = self.telaInicial.lineEditUser.text()
         senha = self.telaInicial.lineEditSenha.text()
         if usuario != '' and senha != '':
@@ -183,6 +322,9 @@ class Main(QMainWindow, Ui_Main):
         self.telaInicial.lineEditSenha.setText("")
 
     def BotaoDepositar(self):
+        """
+        Envia uma solicitação ao servidor para depositar e recebe os campos de valor para depositar
+        """
         valor = self.telaDeposito.lineEditDepositar.text()
         if valor != '':
             if valor.replace('.','').isdigit():
@@ -197,6 +339,9 @@ class Main(QMainWindow, Ui_Main):
         self.telaDeposito.lineEditDepositar.setText('')
 
     def BotaoSacar(self):
+        """
+        Envia uma solicitação ao servidor para sacar e recebe os campos de valor para sacar
+        """
         valor = self.telaSacar.lineEditSacar.text()
         if valor != '':
             if valor.replace('.','').isdigit():
@@ -214,6 +359,9 @@ class Main(QMainWindow, Ui_Main):
         self.telaSacar.lineEditSacar.setText('')
 
     def BotaoTransferir(self):
+        """
+        Envia uma solicitação ao servidor para transferir e recebe os campos de valor para transferir e o número da conta de destino
+        """
         valor = self.telaTransferir.lineEditTransferir.text()
         numero = self.telaTransferir.lineEditConta.text()
         if valor != '' and numero != '':
@@ -229,6 +377,14 @@ class Main(QMainWindow, Ui_Main):
         self.telaTransferir.lineEditConta.setText('')
     
     def concatenarHis(self, string):
+        """
+        Formata a mensagem enviada pelo servidor do extrato
+
+        Parameters
+        ----------
+        string: list
+            mensagem do historico
+        """
         noti = ''
         for i in range(len(string)):
             noti += string[i] + ' '

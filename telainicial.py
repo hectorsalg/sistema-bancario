@@ -12,6 +12,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class TelaInicial(object):
+    """
+    Essa classe representa a tela inicial
+    """
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(900, 600)

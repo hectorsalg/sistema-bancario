@@ -12,6 +12,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class TelaTransferir(object):
+    """
+    Essa classe representa a tela transferir
+    """
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(900, 600)

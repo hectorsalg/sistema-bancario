@@ -3,6 +3,25 @@ from banco import *
 import threading
 
 class ClienteThread(threading.Thread):
+    """
+    Essa classe representa o as conexões para os clientes
+
+
+    Atributes
+    ---------
+    clientSock: clientSock
+        socket do cliente
+    clientAddress: clientAddress
+        endereço ip do cliente
+    solicitaco: list
+        lista com metodo e dados do usuário
+
+    Methods
+    ----------
+    run():
+        recebe solicitação do cliente e envia uma mensagem para o cliente
+
+    """
     def __init__(self, clientSock, clientAddress):
         threading.Thread.__init__(self)
         self.clientSock = clientSock
@@ -11,19 +30,43 @@ class ClienteThread(threading.Thread):
     def run(self):
         try:
             while True:
-                solicitaco = self.clientSock.recv(2048).decode().split("*")
-                metodo = solicitaco.pop(0)
+                solicitacao = self.clientSock.recv(2048).decode().split("*")
+                metodo = solicitacao.pop(0)
                 if metodo == 'sair':
                     self.clientSock.close()
                     break
                 banco = Banco()
                 func = getattr(banco, metodo)
-                retorno = func(*solicitaco)
+                retorno = func(*solicitacao)
                 self.clientSock.send(f'{retorno}'.encode()) 
         except AttributeError:
             print('Error')
 
 class Servidor():
+
+    """
+    Essa classe representa o as conexões para os clientes
+
+
+    Atributes
+    ---------
+    host: str
+        ip do servidor
+    port: int
+        porta do servidor
+    addr: array
+        endereço do servidor
+    server_socket: socket.socket
+        socket do servidor
+    novaThread: class
+        socket do cliente
+
+    Methods
+    ----------
+    start():
+        recebe solicitação do cliente e envia uma mensagem para o cliente
+
+    """
     
     def __init__(self):
         host = '0.0.0.0'

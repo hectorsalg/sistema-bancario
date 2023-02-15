@@ -12,6 +12,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class TelaSacar(object):
+    """
+    Essa classe representa a tela sacar
+    """
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(900, 600)

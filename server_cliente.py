@@ -1,6 +1,9 @@
 import socket 
 
 def server_cliente():
+    """
+    Essa classe representa uma conexao do cliente ao servidor
+    """
     ip = 'localhost'
     port = 5001
     addr = ((ip, port)) 
